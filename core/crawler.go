@@ -305,13 +305,14 @@ func (crawler *Crawler) Start() {
 
 	crawler.C.OnResponse(func(response *colly.Response) {
 		respStr := DecodeChars(string(response.Body))
+		respLen := len(respStr)
 
 		crawler.findSubdomains(respStr)
 		crawler.findAWSS3(respStr)
 
 		// Verify which link is working
 		u := response.Request.URL.String()
-		outputFormat := fmt.Sprintf("[url] - [code-%d] - %s", response.StatusCode, u)
+		outputFormat := fmt.Sprintf("[url] - [code-%d] - [length-%d] - %s", response.StatusCode, respLen, u)
 		fmt.Println(outputFormat)
 		if crawler.Output != nil {
 			crawler.Output.WriteToFile(outputFormat)
